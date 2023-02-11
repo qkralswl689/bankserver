@@ -4,15 +4,17 @@ import com.bank.dto.Memberdto;
 import com.bank.entity.Member;
 import com.bank.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.Valid;
+import java.time.LocalDateTime;
 
 @Service
 @Transactional
@@ -21,19 +23,33 @@ public class MemberService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
 
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+        return encoder;
+    }
+
+    public Member saveMember(Member member){
+        validateDuplicateMember(member);
+        return memberRepository.save(member);
+    }
+
     @Transactional
-    public Member joinMember(@Valid Memberdto memberdto ,PasswordEncoder passwordEncoder){
+    public Member joinMember(Memberdto memberdto ,PasswordEncoder passwordEncoder){
 
         Member member = new Member();
         String password = passwordEncoder.encode(memberdto.getPassword());
 
         member.setEmail(memberdto.getEmail());
         member.setPassword(password);
+        member.setRegTime(LocalDateTime.now());
+        member.setUpdateTime(LocalDateTime.now());
 
         validateDuplicateMember(member);
 
        return memberRepository.save(member);
     }
+
 
 
     public void validateDuplicateMember(Member member){

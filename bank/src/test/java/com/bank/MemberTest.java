@@ -10,7 +10,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootTest
-public class MemberTest{
+public class MemberTest {
+
 
     @Autowired
     private MemberService memberService;
@@ -18,18 +19,23 @@ public class MemberTest{
     @Autowired
     PasswordEncoder passwordEncoder;
 
+
     @Test
     @DisplayName("회원가입")
-    public Member joinMember(String email, String password) throws Exception{
+    public void joinMember() throws Exception{
 
         Memberdto memberdto = new Memberdto();
+        
+        for(int i = 0; i < 5; i++){
+            String email = "test" + i + "@gmail.com";
+            String password = "1234" + i;
+            memberdto.setEmail(email);
+            memberdto.setPassword(password);
 
-        memberdto.setEmail(email);
-        memberdto.setPassword(password);
+            memberService.joinMember(memberdto,passwordEncoder);
 
-        Member member = memberService.joinMember(memberdto,passwordEncoder);
+        }
 
-        return member;
     }
 }
 
