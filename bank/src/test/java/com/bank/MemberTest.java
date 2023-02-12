@@ -25,16 +25,21 @@ public class MemberTest {
     public void joinMember() throws Exception{
 
         Memberdto memberdto = new Memberdto();
-        
-        for(int i = 0; i < 5; i++){
-            String email = "test" + i + "@gmail.com";
-            String password = "1234" + i;
-            memberdto.setEmail(email);
-            memberdto.setPassword(password);
+        String email = "test5@gmail.com";
+        String password = "1234";
+        memberdto.setEmail(email);
+        memberdto.setPassword(password);
 
-            memberService.joinMember(memberdto,passwordEncoder);
+        memberService.joinMember(memberdto,passwordEncoder);
 
-        }
+//        for(int i = 0; i < 5; i++){
+//            String email = "test" + i + "@gmail.com";
+//            String password = "1234" + i;
+//            memberdto.setEmail(email);
+//            memberdto.setPassword(password);
+//
+//            memberService.joinMember(memberdto,passwordEncoder);
+//        }
 
     }
 }

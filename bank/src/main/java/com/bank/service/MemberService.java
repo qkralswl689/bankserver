@@ -4,6 +4,7 @@ import com.bank.dto.Memberdto;
 import com.bank.entity.Member;
 import com.bank.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,6 +22,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class MemberService implements UserDetailsService {
 
+    @Autowired
     private final MemberRepository memberRepository;
 
     @Bean
@@ -29,10 +31,6 @@ public class MemberService implements UserDetailsService {
         return encoder;
     }
 
-    public Member saveMember(Member member){
-        validateDuplicateMember(member);
-        return memberRepository.save(member);
-    }
 
     @Transactional
     public Member joinMember(Memberdto memberdto ,PasswordEncoder passwordEncoder){
@@ -62,6 +60,7 @@ public class MemberService implements UserDetailsService {
     }
 
 
+    // 로그인 , 로그아웃
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 

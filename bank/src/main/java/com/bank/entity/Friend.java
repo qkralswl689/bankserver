@@ -9,21 +9,23 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "member")
+@Table(name = "friend")
 @Getter
 @Setter
 @ToString
-public class Member extends BaseEntity{
+public class Friend extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(unique = true,nullable = false)
-    private String email;
+    private String userEmail;
 
     @Column(nullable = false)
-    private String password;
+    private String friendEmail;
+
+
 
 
 }
