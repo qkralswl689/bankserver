@@ -1,29 +1,16 @@
 package com.bank.service;
 
 import com.bank.dto.Frienddto;
-import com.bank.dto.Memberdto;
 import com.bank.entity.Friend;
-import com.bank.entity.Member;
 import com.bank.repository.FriendRepository;
-import com.bank.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -41,32 +28,50 @@ public class FriendService  {
 
         Friend friend = new Friend();
 
-        friend.setUserEmail(frienddto.getUserEmail());
-        friend.setFriendEmail(frienddto.getFriendEmail());
-        friend.setRegTime(LocalDateTime.now());
-        friend.setUpdateTime(LocalDateTime.now());
+        String userEmail = frienddto.getUserEmail();
+        String friendEmail = frienddto.getFriendEmail();
 
-        validateDuplicateMember(friend);
+        Friend friendInfo = checkFriend(userEmail,friendEmail);
+
+        if( friendInfo != null){
+            throw new IllegalStateException("이미 추가된 친구입니다");
+        }else{
+            friend.setUserEmail(userEmail);
+            friend.setFriendEmail(friendEmail);
+            friend.setRegTime(LocalDateTime.now());
+            friend.setUpdateTime(LocalDateTime.now());
+        }
 
        return friendRepository.save(friend);
     }
 
+    @Transactional
+    public void deleteFriend(String userEmail , String frinedEmail){
 
+        Friend friend = checkFriend(userEmail,frinedEmail);
 
-    public void validateDuplicateMember(Friend friend){
-
-       // List friends = friendRepository.findByFriends(friend.getUserEmail());
-        List<Friend> friends = friendRepository.findByFriends(friend.getUserEmail());
-
-        Map<String, String> map = new HashMap<>();
-        for (Friend friendlist : friends) {
-            map.put(friendlist.getUserEmail(), friendlist.getFriendEmail());
+        if( friend == null){
+            throw new IllegalStateException("해당 회원의 친구가 아닙니다.");
         }
 
-        for (int i = 0; i < friends.size(); i++){
-            if(map.get(0).equals(friend.getFriendEmail())){
-                throw new IllegalStateException("이미 추가된 친구입니다");
+        friendRepository.deleteById(friend.getId());
+    }
+
+
+
+    public Friend checkFriend(String userEmail , String frinedEmail){
+
+        List<Friend> friends = friendRepository.findByFriends(userEmail);
+
+        for( int i = 0; i < friends.size(); i++){
+
+            if(friends.get(i).getFriendEmail().equals(frinedEmail)){
+                return friends.get(i);
             }
         }
+
+        return null;
     }
+
+
 }

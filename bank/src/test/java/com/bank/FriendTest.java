@@ -23,12 +23,23 @@ public class FriendTest {
 
         Frienddto frienddto = new Frienddto();
         String userEmail = "test0@gmail.com";
-        String friendEmail = "test5@gmail.com";
+        String friendEmail = "test3@gmail.com";
 
         frienddto.setUserEmail(userEmail);
         frienddto.setFriendEmail(friendEmail);
 
         friendService.addFriend(frienddto);
+
+    }
+
+    @Test
+    @DisplayName("친구삭제")
+    public void deleteFriend() throws Exception{
+
+        String userEmail = "test0@gmail.com";
+        String friendEmail = "test3@gmail.com";
+
+        friendService.deleteFriend(userEmail,friendEmail);
 
     }
 }

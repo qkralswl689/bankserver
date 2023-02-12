@@ -19,7 +19,8 @@ public class Friend extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(unique = true,nullable = false)
+
+    @Column(name = "email" ,nullable = false)
     private String userEmail;
 
     @Column(nullable = false)
