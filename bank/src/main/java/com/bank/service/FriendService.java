@@ -58,6 +58,13 @@ public class FriendService  {
     }
 
 
+    @Transactional
+    public List<Friend> searchFriend(String userEmail ){
+
+        List<Friend> friends = friendRepository.findByFriends(userEmail);
+
+        return friends;
+    }
 
     public Friend checkFriend(String userEmail , String frinedEmail){
 

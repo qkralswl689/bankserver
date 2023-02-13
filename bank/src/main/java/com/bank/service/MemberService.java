@@ -39,6 +39,7 @@ public class MemberService implements UserDetailsService {
         String password = passwordEncoder.encode(memberdto.getPassword());
 
         member.setEmail(memberdto.getEmail());
+        member.setName(memberdto.getName());
         member.setPassword(password);
         member.setRegTime(LocalDateTime.now());
         member.setUpdateTime(LocalDateTime.now());

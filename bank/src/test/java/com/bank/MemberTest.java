@@ -27,7 +27,10 @@ public class MemberTest {
         Memberdto memberdto = new Memberdto();
         String email = "test5@gmail.com";
         String password = "1234";
+        String name = "홍길동";
+
         memberdto.setEmail(email);
+        memberdto.setEmail(name);
         memberdto.setPassword(password);
 
         memberService.joinMember(memberdto,passwordEncoder);
@@ -35,7 +38,9 @@ public class MemberTest {
 //        for(int i = 0; i < 5; i++){
 //            String email = "test" + i + "@gmail.com";
 //            String password = "1234" + i;
+//            String name = "홍길동" + i;
 //            memberdto.setEmail(email);
+//            memberdto.setEmail(name);
 //            memberdto.setPassword(password);
 //
 //            memberService.joinMember(memberdto,passwordEncoder);
