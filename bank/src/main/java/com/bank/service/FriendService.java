@@ -24,7 +24,7 @@ public class FriendService  {
 
 
     @Transactional
-    public Friend addFriend(Frienddto frienddto ){
+    public void addFriend(Frienddto frienddto ){
 
         Friend friend = new Friend();
 
@@ -34,15 +34,19 @@ public class FriendService  {
         Friend friendInfo = checkFriend(userEmail,friendEmail);
 
         if( friendInfo != null){
+
             throw new IllegalStateException("이미 추가된 친구입니다");
+
         }else{
             friend.setUserEmail(userEmail);
             friend.setFriendEmail(friendEmail);
             friend.setRegTime(LocalDateTime.now());
             friend.setUpdateTime(LocalDateTime.now());
+
+            friendRepository.save(friend);
         }
 
-       return friendRepository.save(friend);
+
     }
 
     @Transactional

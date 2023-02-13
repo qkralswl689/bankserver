@@ -25,8 +25,9 @@ public class FriendTest {
     public void addFriend() throws Exception{
 
         Frienddto frienddto = new Frienddto();
-        String userEmail = "test0@gmail.com";
-        String friendEmail = "test3@gmail.com";
+
+        String userEmail = "test4@gmail.com";
+        String friendEmail = "test9@gmail.com";
 
         frienddto.setUserEmail(userEmail);
         frienddto.setFriendEmail(friendEmail);

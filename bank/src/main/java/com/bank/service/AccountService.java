@@ -1,11 +1,10 @@
 package com.bank.service;
 
 import com.bank.dto.Accountdto;
-import com.bank.dto.Frienddto;
 import com.bank.entity.Account;
-import com.bank.entity.Friend;
+import com.bank.entity.Member;
 import com.bank.repository.AccountRepository;
-import com.bank.repository.FriendRepository;
+import com.bank.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,44 +24,55 @@ public class AccountService {
     @Autowired
     private final AccountRepository accountRepository;
 
+    @Autowired
+    private final MemberRepository memberRepository;
+
     @Transactional
     public Account createAccount(Accountdto accountdto ){
 
         Account account = new Account();
 
         String userEmail = accountdto.getEmail();
-        String  accountNum = accountdto.getAccountNum();
+        String accountNum = accountdto.getAccountNum();
 
-        if(checkAccount(userEmail,accountNum) == true){
+        if(chkUserAndAccount(userEmail,accountNum) == true){
 
+            account.setEmail(userEmail);
+            account.setAccountNum(accountNum);
+            account.setName(accountdto.getName());
+            account.setBalance(accountdto.getBalance());
+            account.setTotal(accountdto.getTotal());
+            account.setRegTime(LocalDateTime.now());
+            account.setUpdateTime(LocalDateTime.now());
         }
 
-//        if( friendInfo != null){
-//            throw new IllegalStateException("이미 추가된 친구입니다");
-//        }else{
-//            friend.setUserEmail(userEmail);
-//            friend.setFriendEmail(friendEmail);
-//            friend.setRegTime(LocalDateTime.now());
-//            friend.setUpdateTime(LocalDateTime.now());
-//        }
-//
-//        return friendRepository.save(friend);
+
+        return accountRepository.save(account);
     }
 
 
-    public boolean checkAccount(String userEmail , String accountNum){
+    public boolean chkUserAndAccount(String userEmail , String accountNum){
 
+        Member member = memberRepository.findByEmail(userEmail);
 
-        List<Account> acount = accountRepository.findByAccount(userEmail);
+        if(member == null){
+            return false;
+        }else{
+            List<Account> acount = accountRepository.findByAccount(userEmail);
 
-        for( int i = 0; i < acount.size(); i++){
+            if(acount != null){
 
-            if(acount.get(i).getAccountNum().equals(accountNum)){
-                return false;
+                for( int i = 0; i < acount.size(); i++){
+
+                    if(acount.get(i).getAccountNum().equals(accountNum)){
+                        return false;
+                    }
+                }
             }
-        }
 
-        return true;
+            return true;
+
+        }
     }
 
 }

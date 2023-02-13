@@ -25,7 +25,7 @@ public class Account extends BaseEntity{
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String sender;
 
     @Column(unique = true, nullable = false)
@@ -34,10 +34,10 @@ public class Account extends BaseEntity{
     @Column( nullable = true)
     private String comments;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private int balance;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private int total;
 
     private LocalDateTime inputTime;
