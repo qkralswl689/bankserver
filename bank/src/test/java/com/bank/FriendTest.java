@@ -1,17 +1,18 @@
 package com.bank;
 
-import com.bank.dto.Frienddto;
-import com.bank.dto.Memberdto;
 import com.bank.entity.Friend;
+import com.bank.entity.Member;
+import com.bank.repository.FriendRepository;
+import com.bank.repository.MemberRepository;
 import com.bank.service.FriendService;
-import com.bank.service.MemberService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 public class FriendTest {
@@ -20,20 +21,28 @@ public class FriendTest {
     @Autowired
     private FriendService friendService;
 
+    @Autowired
+    private FriendRepository friendRepository;
+
+    @Autowired
+    private MemberRepository memberRepository;
+
+
+
     @Test
     @DisplayName("친구추가")
     public void addFriend() throws Exception{
 
-        Frienddto frienddto = new Frienddto();
+        String email = "test0@gmail.com";
+        String friendEmail = "test4@gmail.com";
 
-        String userEmail = "test4@gmail.com";
-        String friendEmail = "test9@gmail.com";
+        friendService.addFriend(email,friendEmail);
 
-        frienddto.setUserEmail(userEmail);
-        frienddto.setFriendEmail(friendEmail);
+        Friend saveFriend = friendRepository.findByEmail(email);
+        Friend saveFriend2 = friendRepository.findByEmail(friendEmail);
 
-        friendService.addFriend(frienddto);
-
+        assertEquals(saveFriend.getMember().getEmail(), saveFriend2.getFriend().getEmail());
+        assertEquals(saveFriend2.getMember().getEmail(), saveFriend.getFriend().getEmail());
     }
 
     @Test
@@ -57,7 +66,7 @@ public class FriendTest {
 
         for (int i = 0; i < myfriends.size(); i++){
 
-            System.out.println(myfriends.get(i).getFriendEmail() + " Friend " + i);
+            System.out.println(myfriends.get(i).getFriend().getEmail() + " Friend " + i);
         }
 
     }

@@ -16,7 +16,12 @@ public interface FriendRepository extends JpaRepository<Friend, Long> , Querydsl
 
     //JPQL사용
     @Query("select f from Friend f " +
-            "where f.userEmail = :userEmail")
-    List<Friend> findByFriends(@Param("userEmail") String userEmail);
+            "where f.member.email = :email")
+    List<Friend> findByFriends(@Param("email") String email);
+
+    //JPQL사용
+    @Query("select f from Friend f " +
+            "where f.member.email = :email")
+    Friend findByEmail(@Param("email") String email);
 
 }

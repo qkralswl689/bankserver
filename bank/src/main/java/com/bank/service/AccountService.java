@@ -37,7 +37,9 @@ public class AccountService {
 
         if(chkUserAndAccount(userEmail,accountNum) == true){
 
-            account.setEmail(userEmail);
+            Member member = memberRepository.findByEmail(userEmail);
+
+            account.setMember(member);
             account.setAccountNum(accountNum);
             account.setName(accountdto.getName());
             account.setBalance(accountdto.getBalance());
@@ -50,6 +52,14 @@ public class AccountService {
         return accountRepository.save(account);
     }
 
+    @Transactional
+    public List<Account> searchAccount(String userEmail ){
+
+        List<Account> accountList = accountRepository.findByAccount(userEmail);
+
+        return accountList;
+    }
+
 
     public boolean chkUserAndAccount(String userEmail , String accountNum){
 
@@ -58,13 +68,13 @@ public class AccountService {
         if(member == null){
             return false;
         }else{
-            List<Account> acount = accountRepository.findByAccount(userEmail);
+            List<Account> account = accountRepository.findByAccount(userEmail);
 
-            if(acount != null){
+            if(account != null){
 
-                for( int i = 0; i < acount.size(); i++){
+                for( int i = 0; i < account.size(); i++){
 
-                    if(acount.get(i).getAccountNum().equals(accountNum)){
+                    if(account.get(i).getAccountNum().equals(accountNum)){
                         return false;
                     }
                 }

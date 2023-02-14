@@ -15,6 +15,8 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     //JPQL사용
     @Query("select a from Account a " +
-            "where a.email = :email")
+            "where a.member.email = :email")
     List<Account> findByAccount(@Param("email") String userEmail);
+
+
 }

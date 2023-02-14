@@ -19,8 +19,9 @@ public class Account extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(nullable = false)
-    private String email;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "email")
+    private Member member;
 
     @Column(nullable = false)
     private String name;

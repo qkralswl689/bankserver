@@ -1,18 +1,14 @@
 package com.bank;
 
 import com.bank.dto.Accountdto;
-import com.bank.dto.Frienddto;
 import com.bank.entity.Account;
-import com.bank.entity.Friend;
 import com.bank.repository.AccountRepository;
 import com.bank.service.AccountService;
-import com.bank.service.FriendService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @SpringBootTest
@@ -41,7 +37,7 @@ public class AccountTest {
         List<Account> account = accountRepository.findByAccount(accountdto.getEmail());
 
         for(int i = 0; i < account.size(); i++){
-            System.out.println("Email : " + account.get(i).getEmail());
+            System.out.println("Email : " + account.get(i).getMember().getEmail());
             System.out.println("AccountNum : " + account.get(i).getAccountNum());
             System.out.println("name : " + account.get(i).getName());
 
@@ -49,6 +45,23 @@ public class AccountTest {
 
     }
 
+    @Test
+    @DisplayName("계좌조회")
+    public void searchAccount() throws Exception{
+
+        String userEmail = "test0@gmail.com";
+
+        List<Account> account =  accountService.searchAccount(userEmail);
+
+        for(int i = 0; i < account.size(); i++){
+            System.out.println("Email : " + account.get(i).getMember().getEmail());
+            System.out.println("AccountNum : " + account.get(i).getAccountNum());
+            System.out.println("name : " + account.get(i).getName());
+            System.out.println("Balance : " + account.get(i).getBalance());
+            System.out.println("Total : " + account.get(i).getTotal());
+
+        }
+    }
 
 }
 

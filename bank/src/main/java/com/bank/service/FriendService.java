@@ -1,8 +1,9 @@
 package com.bank.service;
 
-import com.bank.dto.Frienddto;
 import com.bank.entity.Friend;
+import com.bank.entity.Member;
 import com.bank.repository.FriendRepository;
+import com.bank.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,29 +23,44 @@ public class FriendService  {
     @Autowired
     private final FriendRepository friendRepository;
 
+    @Autowired
+    private final MemberRepository memberRepository;
+
 
     @Transactional
-    public void addFriend(Frienddto frienddto ){
+    public void addFriend( String email, String friendEmail ){
 
-        Friend friend = new Friend();
 
-        String userEmail = frienddto.getUserEmail();
-        String friendEmail = frienddto.getFriendEmail();
+        Member member = memberRepository.findByEmail(email);
+        Member member2 = memberRepository.findByEmail(friendEmail);
 
-        Friend friendInfo = checkFriend(userEmail,friendEmail);
+        if(member == null || member2 == null){
+            throw new IllegalStateException("회원이 존재하지 않습니다.");
+        }
+
+        Friend friendInfo = checkFriend(email,friendEmail);
 
         if( friendInfo != null){
 
             throw new IllegalStateException("이미 추가된 친구입니다");
 
-        }else{
-            friend.setUserEmail(userEmail);
-            friend.setFriendEmail(friendEmail);
-            friend.setRegTime(LocalDateTime.now());
-            friend.setUpdateTime(LocalDateTime.now());
-
-            friendRepository.save(friend);
         }
+
+        Friend friend = new Friend();
+        friend.setMember(member);
+        friend.setFriend(member2);
+        friend.setRegTime(LocalDateTime.now());
+        friend.setUpdateTime(LocalDateTime.now());
+
+        friendRepository.save(friend);
+
+        Friend friend2 = new Friend();
+        friend2.setMember(member2);
+        friend2.setFriend(member);
+        friend2.setRegTime(LocalDateTime.now());
+        friend2.setUpdateTime(LocalDateTime.now());
+
+        friendRepository.save(friend2);
 
 
     }
@@ -76,7 +92,7 @@ public class FriendService  {
 
         for( int i = 0; i < friends.size(); i++){
 
-            if(friends.get(i).getFriendEmail().equals(frinedEmail)){
+            if(friends.get(i).getFriend().getEmail().equals(frinedEmail)){
                 return friends.get(i);
             }
         }

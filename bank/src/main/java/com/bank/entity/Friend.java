@@ -19,12 +19,14 @@ public class Friend extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY , cascade = CascadeType.ALL)
+    @JoinColumn(name = "member_id")
+    private Member member;
 
-    @Column(name = "email" ,nullable = false)
-    private String userEmail;
 
-    @Column(nullable = false)
-    private String friendEmail;
+    @ManyToOne(fetch = FetchType.LAZY , cascade = CascadeType.ALL)
+    @JoinColumn(name = "friend_id")
+    private Member friend;
 
 
 
