@@ -2,6 +2,7 @@ package com.bank.service;
 
 import com.bank.dto.Accountdto;
 import com.bank.entity.Account;
+import com.bank.entity.Friend;
 import com.bank.entity.Member;
 import com.bank.repository.AccountRepository;
 import com.bank.repository.MemberRepository;
@@ -27,12 +28,14 @@ public class AccountService {
     @Autowired
     private final MemberRepository memberRepository;
 
+    private final  FriendService friendService;
+
     @Transactional
     public Account createAccount(Accountdto accountdto ){
 
         Account account = new Account();
 
-        String userEmail = accountdto.getEmail();
+        String userEmail = accountdto.getMember().getEmail();
         String accountNum = accountdto.getAccountNum();
 
         if(chkUserAndAccount(userEmail,accountNum) == true){
@@ -41,7 +44,6 @@ public class AccountService {
 
             account.setMember(member);
             account.setAccountNum(accountNum);
-            account.setName(accountdto.getName());
             account.setBalance(accountdto.getBalance());
             account.setTotal(accountdto.getTotal());
             account.setRegTime(LocalDateTime.now());
@@ -55,9 +57,40 @@ public class AccountService {
     @Transactional
     public List<Account> searchAccount(String userEmail ){
 
-        List<Account> accountList = accountRepository.findByAccount(userEmail);
+        List<Account> accountList = accountRepository.findByEmail(userEmail);
 
         return accountList;
+    }
+
+    @Transactional
+    public Account transferAccount(Accountdto accountdto){
+
+        Account account = new Account();
+        String email = accountdto.getMember().getEmail();
+        String senderEmail = accountdto.getSender().getEmail();
+        String accountNum = accountdto.getAccountNum();
+
+        Friend friend =  friendService.checkFriend(email,senderEmail);
+
+        if( friend == null){
+            throw new IllegalStateException("해당 회원의 친구가 아닙니다.");
+        }
+
+        if(chkUserAndAccount(email,accountNum) == true){
+
+
+            account = accountRepository.findByAccountNum(accountdto.getAccountNum());
+
+            Member sender = memberRepository.findByEmail(accountdto.getSender().getEmail());
+
+            account.setSender(sender);
+            account.setBalance(accountdto.getBalance());
+            account.setComments(accountdto.getComments());
+            account.setTotal(account.getTotal() + accountdto.getBalance());
+            account.setRegTime(LocalDateTime.now());
+            account.setUpdateTime(LocalDateTime.now());
+        }
+        return accountRepository.save(account);
     }
 
 
@@ -68,7 +101,7 @@ public class AccountService {
         if(member == null){
             return false;
         }else{
-            List<Account> account = accountRepository.findByAccount(userEmail);
+            List<Account> account = accountRepository.findByEmail(userEmail);
 
             if(account != null){
 

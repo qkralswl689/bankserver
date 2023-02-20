@@ -66,15 +66,28 @@ public class FriendService  {
     }
 
     @Transactional
-    public void deleteFriend(String userEmail , String frinedEmail){
+    public void deleteFriend(String email , String friendEmail){
 
-        Friend friend = checkFriend(userEmail,frinedEmail);
+
+        Member member = memberRepository.findByEmail(email);
+        Member member2 = memberRepository.findByEmail(friendEmail);
+
+        if(member == null || member2 == null){
+            throw new IllegalStateException("회원이 존재하지 않습니다.");
+        }
+
+        Friend friend = checkFriend(email,friendEmail);
 
         if( friend == null){
             throw new IllegalStateException("해당 회원의 친구가 아닙니다.");
         }
 
-        friendRepository.deleteById(friend.getId());
+        Friend delFriend = friendRepository.findByEmail(member.getEmail());
+        Friend delFriend2 = friendRepository.findByEmail(member2.getEmail());
+
+        friendRepository.deleteById(delFriend.getId());
+        friendRepository.deleteById(delFriend2.getId());
+
     }
 
 

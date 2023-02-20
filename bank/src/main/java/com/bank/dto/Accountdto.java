@@ -1,5 +1,6 @@
 package com.bank.dto;
 
+import com.bank.entity.Member;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,11 +15,9 @@ import java.time.LocalDateTime;
 public class Accountdto {
 
 
-    private String email;
+    private Member member;
 
-    private String name;
-
-    private String sender;
+    private Member sender;
 
     private String accountNum;
 

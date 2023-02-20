@@ -19,15 +19,13 @@ public class Account extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "email")
     private Member member;
 
-    @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = true)
-    private String sender;
+    @ManyToOne(fetch = FetchType.EAGER , cascade = CascadeType.ALL)
+    @JoinColumn(name = "sender")
+    private Member sender;
 
     @Column(unique = true, nullable = false)
     private String accountNum;
