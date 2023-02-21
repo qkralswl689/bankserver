@@ -1,9 +1,11 @@
 package com.bank.service;
 
-import com.bank.dto.Accountdto;
+import com.bank.dto.AccountDetaildto;
 import com.bank.entity.Account;
+import com.bank.entity.AccountDetail;
 import com.bank.entity.Friend;
 import com.bank.entity.Member;
+import com.bank.repository.AccountDetailRepository;
 import com.bank.repository.AccountRepository;
 import com.bank.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,17 +28,20 @@ public class AccountService {
     private final AccountRepository accountRepository;
 
     @Autowired
+    private final AccountDetailRepository accountDetailRepository;
+
+    @Autowired
     private final MemberRepository memberRepository;
 
     private final  FriendService friendService;
 
     @Transactional
-    public Account createAccount(Accountdto accountdto ){
+    public Account createAccount(Account account ){
 
-        Account account = new Account();
+        //Account account = new Account();
 
-        String userEmail = accountdto.getMember().getEmail();
-        String accountNum = accountdto.getAccountNum();
+        String userEmail = account.getMember().getEmail();
+        String accountNum = account.getAccountNum();
 
         if(chkUserAndAccount(userEmail,accountNum) == true){
 
@@ -44,10 +49,7 @@ public class AccountService {
 
             account.setMember(member);
             account.setAccountNum(accountNum);
-            account.setBalance(accountdto.getBalance());
-            account.setTotal(accountdto.getTotal());
-            account.setRegTime(LocalDateTime.now());
-            account.setUpdateTime(LocalDateTime.now());
+
         }
 
 
@@ -63,12 +65,12 @@ public class AccountService {
     }
 
     @Transactional
-    public Account transferAccount(Accountdto accountdto){
+    public AccountDetail transferAccount(AccountDetaildto accountdto){
 
         Account account = new Account();
-        String email = accountdto.getMember().getEmail();
+        String email = accountdto.getAccount().getMember().getEmail();
         String senderEmail = accountdto.getSender().getEmail();
-        String accountNum = accountdto.getAccountNum();
+        String accountNum = accountdto.getAccount().getAccountNum();
 
         Friend friend =  friendService.checkFriend(email,senderEmail);
 
@@ -79,18 +81,31 @@ public class AccountService {
         if(chkUserAndAccount(email,accountNum) == true){
 
 
-            account = accountRepository.findByAccountNum(accountdto.getAccountNum());
+            account = accountRepository.findByAccountNum(accountNum);
 
+            AccountDetail accountDetail = new AccountDetail();
+
+            Member member = memberRepository.findByEmail(accountdto.getMember().getEmail());
             Member sender = memberRepository.findByEmail(accountdto.getSender().getEmail());
 
-            account.setSender(sender);
-            account.setBalance(accountdto.getBalance());
-            account.setComments(accountdto.getComments());
+            accountDetail.setMember(member);
+            accountDetail.setSender(sender);
+            accountDetail.setAccount(account);
+            accountDetail.setBalance(accountdto.getBalance());
+            accountDetail.setComments(accountdto.getComments());
+            accountDetail.setTotal(account.getTotal() + accountdto.getBalance());
+            accountDetail.setRegTime(LocalDateTime.now());
+            accountDetail.setUpdateTime(LocalDateTime.now());
+            accountDetail.setInputTime(LocalDateTime.now());
+
             account.setTotal(account.getTotal() + accountdto.getBalance());
-            account.setRegTime(LocalDateTime.now());
-            account.setUpdateTime(LocalDateTime.now());
+            accountRepository.save(account);
+
+            return accountDetailRepository.save(accountDetail);
+
         }
-        return accountRepository.save(account);
+
+        return null;
     }
 
 
@@ -108,12 +123,12 @@ public class AccountService {
                 for( int i = 0; i < account.size(); i++){
 
                     if(account.get(i).getAccountNum().equals(accountNum)){
-                        return false;
+                        return true;
                     }
                 }
             }
 
-            return true;
+            return false;
 
         }
     }

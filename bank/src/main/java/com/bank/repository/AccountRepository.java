@@ -1,6 +1,7 @@
 package com.bank.repository;
 
 import com.bank.entity.Account;
+import com.bank.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -28,5 +29,8 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
             " and a.accountNum = :accountNum")
     Account findByEmailAndAccountNum(@Param("email") String userEmail,@Param("accountNum") String accountNum);
 
-
+    //JPQL사용
+    @Query("select a from Account a " +
+            "where a.member = :member" )
+    Account findByMember(@Param("member")Member member);
 }

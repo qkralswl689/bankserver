@@ -23,22 +23,11 @@ public class Account extends BaseEntity{
     @JoinColumn(name = "email")
     private Member member;
 
-    @ManyToOne(fetch = FetchType.EAGER , cascade = CascadeType.ALL)
-    @JoinColumn(name = "sender")
-    private Member sender;
-
-    @Column(unique = true, nullable = false)
+    @Column(name = "account_num",unique = true, nullable = false)
     private String accountNum;
-
-    @Column( nullable = true)
-    private String comments;
-
-    @Column(nullable = true)
-    private int balance;
 
     @Column(nullable = true)
     private int total;
 
-    private LocalDateTime inputTime;
 
 }

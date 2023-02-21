@@ -1,25 +1,22 @@
 package com.bank.dto;
 
+import com.bank.entity.Account;
 import com.bank.entity.Member;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class Accountdto {
+public class AccountDetaildto {
 
 
     private Member member;
 
     private Member sender;
 
-    private String accountNum;
+    private Account account;
 
     private String comments;
 
