@@ -1,6 +1,6 @@
 # bankserver
 
-- ERD : https://dbdiagram.io/d/63fcb332296d97641d84088f
+#### ERD : https://dbdiagram.io/d/63fcb332296d97641d84088f
 
 - 스펙
 - 아키텍처 스타일
