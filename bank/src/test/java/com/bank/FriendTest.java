@@ -35,15 +35,15 @@ public class FriendTest {
     public void addFriend() throws Exception{
 
         String email = "test0@gmail.com";
-        String friendEmail = "test7@gmail.com";
+        String friendEmail = "test5@gmail.com";
 
         friendService.addFriend(email,friendEmail);
 
-//        Friend saveFriend = friendRepository.findByEmail(email);
-//        Friend saveFriend2 = friendRepository.findByEmail(friendEmail);
-//
-//        assertEquals(saveFriend.getMember().getEmail(), saveFriend2.getFriend().getEmail());
-//        assertEquals(saveFriend2.getMember().getEmail(), saveFriend.getFriend().getEmail());
+        Friend saveFriend = friendRepository.findByEmail(email,friendEmail);
+        Friend saveFriend2 = friendRepository.findByEmail(friendEmail,email);
+
+        assertEquals(saveFriend.getMember().getEmail(), saveFriend2.getFriend().getEmail());
+        assertEquals(saveFriend2.getMember().getEmail(), saveFriend.getFriend().getEmail());
     }
 // 시간 나면 다시
 //    @Test
@@ -67,7 +67,7 @@ public class FriendTest {
 
         for (int i = 0; i < myfriends.size(); i++){
 
-            System.out.println(myfriends.get(i).getFriend().getEmail() + " Friend " + i);
+            System.out.println(" Friend " + i + ": " + myfriends.get(i).getFriend().getEmail() );
         }
 
     }

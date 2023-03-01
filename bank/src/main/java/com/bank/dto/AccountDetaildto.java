@@ -12,11 +12,21 @@ import java.time.LocalDateTime;
 public class AccountDetaildto {
 
 
-    private Member member;
+    private String memberEmail;
+
+    private String senderEmail;
+
+    private String fromAccountNum;
+
+    private String toAccountNum;
 
     private Member sender;
 
-    private Account account;
+    private Account fromAccout;
+
+    private Member member;
+
+    private Account toAccount;
 
     private String comments;
 
@@ -25,4 +35,6 @@ public class AccountDetaildto {
     private int total;
 
     private LocalDateTime inputTime;
+
+    private LocalDateTime outTime;
 }

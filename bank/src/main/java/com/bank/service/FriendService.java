@@ -82,8 +82,8 @@ public class FriendService  {
             throw new IllegalStateException("해당 회원의 친구가 아닙니다.");
         }
 
-        Friend delFriend = friendRepository.findByEmail(member.getEmail());
-        Friend delFriend2 = friendRepository.findByEmail(member2.getEmail());
+        Friend delFriend = friendRepository.findByEmail(member.getEmail(),member2.getEmail());
+        Friend delFriend2 = friendRepository.findByEmail(member2.getEmail(),member.getEmail());
 
         friendRepository.deleteById(delFriend.getId());
         friendRepository.deleteById(delFriend2.getId());

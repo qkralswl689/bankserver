@@ -19,7 +19,7 @@ public class AccountDetail extends BaseEntity{
     private Long id;
 
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "email")
+    @JoinColumn(name = "member_id")
     private Member member;
 
     @ManyToOne(fetch = FetchType.EAGER , cascade = CascadeType.ALL)
@@ -27,9 +27,8 @@ public class AccountDetail extends BaseEntity{
     private Account account;
 
     @ManyToOne(fetch = FetchType.EAGER , cascade = CascadeType.ALL)
-    @JoinColumn(name = "sender")
+    @JoinColumn(name = "sender_id")
     private Member sender;
-
 
     @Column( nullable = true)
     private String comments;
@@ -41,5 +40,7 @@ public class AccountDetail extends BaseEntity{
     private int total;
 
     private LocalDateTime inputTime;
+
+    private LocalDateTime outTime;
 
 }

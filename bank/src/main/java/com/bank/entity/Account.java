@@ -20,7 +20,7 @@ public class Account extends BaseEntity{
     private Long id;
 
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "email")
+    @JoinColumn(name = "member_id")
     private Member member;
 
     @Column(name = "account_num",unique = true, nullable = false)

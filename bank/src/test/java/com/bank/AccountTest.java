@@ -2,6 +2,7 @@ package com.bank;
 
 import com.bank.dto.AccountDetaildto;
 import com.bank.entity.Account;
+import com.bank.entity.AccountDetail;
 import com.bank.entity.Member;
 import com.bank.repository.AccountRepository;
 import com.bank.repository.MemberRepository;
@@ -12,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 public class AccountTest {
@@ -35,37 +38,55 @@ public class AccountTest {
 
         Member member = memberRepository.findByEmail("test0@gmail.com");
         account.setMember(member);
-        account.setAccountNum("1234-5678-9990");
+        account.setAccountNum("1234-5678-9991");
+        account.setTotal(500000);
 
         accountService.createAccount(account);
 
-        List<Account> accountList = accountRepository.findByEmail(member.getEmail());
+        Account saveAccount = accountRepository.findByEmailAndAccountNum(member.getEmail(),account.getAccountNum());
 
-        for(int i = 0; i < accountList.size(); i++){
-            System.out.println("Email : " + accountList.get(i).getMember().getEmail());
-            System.out.println("AccountNum : " + accountList.get(i).getAccountNum());
-            System.out.println("name : " + accountList.get(i).getMember().getName());
-
-        }
+        assertEquals(account.getMember().getEmail(), saveAccount.getMember().getEmail());
+        assertEquals(account.getAccountNum(), saveAccount.getAccountNum());
+        assertEquals(account.getMember().getName(), saveAccount.getMember().getName());
 
     }
 
     @Test
-    @DisplayName("계좌조회")
+    @DisplayName("전체 계좌 정보 조회")
     public void searchAccount() throws Exception{
 
         String userEmail = "test0@gmail.com";
 
         List<Account> account =  accountService.searchAccount(userEmail);
 
-//        for(int i = 0; i < account.size(); i++){
-//            System.out.println("Email : " + account.get(i).getMember().getEmail());
-//            System.out.println("AccountNum : " + account.get(i).getAccountNum());
-//            System.out.println("name : " + account.get(i).getMember().getName());
-//            System.out.println("Balance : " + account.get(i).getBalance());
-//            System.out.println("Total : " + account.get(i).getTotal());
-//
-//        }
+        for(int i = 0; i < account.size(); i++){
+            System.out.println("Email : " + account.get(i).getMember().getEmail());
+            System.out.println("AccountNum : " + account.get(i).getAccountNum());
+            System.out.println("name : " + account.get(i).getMember().getName());
+            System.out.println("Total : " + account.get(i).getTotal());
+        }
+    }
+
+    @Test
+    @DisplayName("특정 계좌 상세 전체조회")
+    public void searchAccountByNum() throws Exception{
+
+        String userEmail = "test0@gmail.com";
+        String accountNum = "1234-5678-9990";
+
+        List<AccountDetail> accountDetail =  accountService.searchAccountByNum(userEmail,accountNum);
+
+        for(int i = 0; i < accountDetail.size(); i++){
+            System.out.println("Email : " + accountDetail.get(i).getMember().getEmail());
+            System.out.println("AccountNum : " + accountDetail.get(i).getAccount().getAccountNum());
+            System.out.println("Name : " + accountDetail.get(i).getMember().getName());
+            System.out.println("Sender : " + accountDetail.get(i).getSender().getEmail());
+            System.out.println("balance : " + accountDetail.get(i).getBalance());
+            System.out.println("Comments : " + accountDetail.get(i).getComments());
+            System.out.println("inputTime : " + accountDetail.get(i).getInputTime());
+            System.out.println("Total : " + accountDetail.get(i).getTotal());
+        }
+
     }
 
     @Test
@@ -74,32 +95,40 @@ public class AccountTest {
 
         AccountDetaildto accountdto = new AccountDetaildto();
 
-        String memberEmail = "test0@gmail.com";
-        String senderEmail = "test5@gmail.com";
+        String senderEmail = "test0@gmail.com";
+        String fromAccountNum = "1234-5678-9991";
 
-        Member member = memberRepository.findByEmail(memberEmail);
-        Member sender = memberRepository.findByEmail(senderEmail);
+        String memberEmail = "test5@gmail.com";
+        String toAccountNum = "1234-5678-9995";
 
-        Account account = accountRepository.findByMember(member);
+//        String senderEmail = "test5@gmail.com";
+//        String fromAccountNum = "1234-5678-9995";
+//
+//        String memberEmail = "test0@gmail.com";
+//        String toAccountNum = "1234-5678-9991";
 
-        accountdto.setMember(member);
-        accountdto.setAccount(account);
-        accountdto.setSender(sender);
-        accountdto.setBalance(200000);
+        accountdto.setSenderEmail(senderEmail);
+        accountdto.setFromAccountNum(fromAccountNum);
+        accountdto.setMemberEmail(memberEmail);
+        accountdto.setToAccountNum(toAccountNum);
+        accountdto.setBalance(5000);
         accountdto.setComments("input TEST2");
 
-        accountService.transferAccount(accountdto);
+        AccountDetail transferAc =  accountService.transferAccount(accountdto);
 
-//        List<Account> accountCheck =  accountService.searchAccount(memberEmail);
-//
-//        for(int i = 0; i < accountCheck.size(); i++){
-//            System.out.println("Email : " + accountCheck.get(i).getMember().getEmail());
-//            System.out.println("AccountNum : " + accountCheck.get(i).getAccountNum());
-//            System.out.println("name : " + accountCheck.get(i).getMember().getName());
-//            System.out.println("Balance : " + accountCheck.get(i).get);
-//            System.out.println("Total : " + accountCheck.get(i).getTotal());
-//
-//        }
+        if(transferAc != null){
+            System.out.println("Email : " + transferAc.getMember().getEmail());
+            System.out.println("AccountNum : " + transferAc.getAccount().getAccountNum());
+            System.out.println("Name : " + transferAc.getMember().getName());
+            System.out.println("Sender : " + transferAc.getSender().getEmail());
+            System.out.println("Balance : " + transferAc.getBalance());
+            System.out.println("Comments : " + transferAc.getComments());
+            System.out.println("InputTime : " + transferAc.getInputTime());
+            System.out.println("Total : " + transferAc.getTotal());
+        }else{
+            System.out.println("실패");
+       }
+
     }
 }
 

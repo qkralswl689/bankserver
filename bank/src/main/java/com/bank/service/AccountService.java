@@ -9,6 +9,7 @@ import com.bank.repository.AccountDetailRepository;
 import com.bank.repository.AccountRepository;
 import com.bank.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -33,12 +34,14 @@ public class AccountService {
     @Autowired
     private final MemberRepository memberRepository;
 
+    @Autowired
     private final  FriendService friendService;
 
+    @Autowired final Mocking mocking;
+
+    // 계좌생성
     @Transactional
     public Account createAccount(Account account ){
-
-        //Account account = new Account();
 
         String userEmail = account.getMember().getEmail();
         String accountNum = account.getAccountNum();
@@ -56,6 +59,7 @@ public class AccountService {
         return accountRepository.save(account);
     }
 
+    // 전체 계좌조회
     @Transactional
     public List<Account> searchAccount(String userEmail ){
 
@@ -64,44 +68,81 @@ public class AccountService {
         return accountList;
     }
 
+    // 특정 계좌 상세 전체 조회
     @Transactional
-    public AccountDetail transferAccount(AccountDetaildto accountdto){
+    public List<AccountDetail> searchAccountByNum(String userEmail,String accountNum ){
 
-        Account account = new Account();
-        String email = accountdto.getAccount().getMember().getEmail();
-        String senderEmail = accountdto.getSender().getEmail();
-        String accountNum = accountdto.getAccount().getAccountNum();
+        List<AccountDetail> accountDetail = accountDetailRepository.findByEmailAndAccount(userEmail,accountNum);
 
-        Friend friend =  friendService.checkFriend(email,senderEmail);
+        return accountDetail;
+    }
+
+
+    // 계좌이체
+    @Transactional
+    public AccountDetail transferAccount(@NotNull AccountDetaildto accountdto) throws InterruptedException {
+
+
+        Member sender = memberRepository.findByEmail(accountdto.getSenderEmail());
+        Account fromAccount = accountRepository.findByEmailAndAccountNum(sender.getEmail(),accountdto.getFromAccountNum());
+
+        Member member = memberRepository.findByEmail(accountdto.getMemberEmail());
+        Account toAccount = accountRepository.findByEmailAndAccountNum(member.getEmail(),accountdto.getToAccountNum());
+
+        Friend friend =  friendService.checkFriend(member.getEmail(),sender.getEmail());
 
         if( friend == null){
             throw new IllegalStateException("해당 회원의 친구가 아닙니다.");
         }
 
-        if(chkUserAndAccount(email,accountNum) == true){
+        if(chkUserAndAccount(sender.getEmail(),fromAccount.getAccountNum()) == true && chkUserAndAccount(member.getEmail(),toAccount.getAccountNum()) == true){
 
 
-            account = accountRepository.findByAccountNum(accountNum);
+            if(fromAccount.getTotal() < accountdto.getBalance()){
+                throw new IllegalStateException("계좌 잔액이 부족합니다.");
+            }
 
-            AccountDetail accountDetail = new AccountDetail();
+            AccountDetail fromAcDetail = new AccountDetail();
+            AccountDetail toAcDetail = new AccountDetail();
 
-            Member member = memberRepository.findByEmail(accountdto.getMember().getEmail());
-            Member sender = memberRepository.findByEmail(accountdto.getSender().getEmail());
+            fromAcDetail.setMember(member);
+            fromAcDetail.setSender(sender);
+            fromAcDetail.setAccount(fromAccount);
+            fromAcDetail.setBalance(accountdto.getBalance());
+            fromAcDetail.setComments(accountdto.getComments());
+            fromAcDetail.setTotal(fromAccount.getTotal() - accountdto.getBalance());
+            fromAcDetail.setRegTime(LocalDateTime.now());
+            fromAcDetail.setUpdateTime(LocalDateTime.now());
+            fromAcDetail.setInputTime(LocalDateTime.now());
 
-            accountDetail.setMember(member);
-            accountDetail.setSender(sender);
-            accountDetail.setAccount(account);
-            accountDetail.setBalance(accountdto.getBalance());
-            accountDetail.setComments(accountdto.getComments());
-            accountDetail.setTotal(account.getTotal() + accountdto.getBalance());
-            accountDetail.setRegTime(LocalDateTime.now());
-            accountDetail.setUpdateTime(LocalDateTime.now());
-            accountDetail.setInputTime(LocalDateTime.now());
+            fromAccount.setTotal(fromAccount.getTotal() - accountdto.getBalance());
+            accountRepository.save(fromAccount);
 
-            account.setTotal(account.getTotal() + accountdto.getBalance());
-            accountRepository.save(account);
+            AccountDetail saveFromAc = accountDetailRepository.save(fromAcDetail);
 
-            return accountDetailRepository.save(accountDetail);
+            toAcDetail.setMember(sender);
+            toAcDetail.setSender(member);
+            toAcDetail.setAccount(toAccount);
+            toAcDetail.setBalance(accountdto.getBalance());
+            toAcDetail.setComments(accountdto.getComments());
+            toAcDetail.setTotal(toAccount.getTotal() + accountdto.getBalance());
+            toAcDetail.setRegTime(LocalDateTime.now());
+            toAcDetail.setUpdateTime(LocalDateTime.now());
+            toAcDetail.setInputTime(LocalDateTime.now());
+
+            toAccount.setTotal(toAccount.getTotal() + accountdto.getBalance());
+            accountRepository.save(toAccount);
+
+            AccountDetail saveToAc = accountDetailRepository.save(toAcDetail);
+
+            if(saveFromAc != null && saveToAc != null){
+                // 알람
+                mocking.alarm();
+            }else {
+                throw new IllegalStateException("이체 실패.");
+            }
+
+            return saveToAc;
 
         }
 
@@ -109,6 +150,7 @@ public class AccountService {
     }
 
 
+    // 사용자,계좌확인
     public boolean chkUserAndAccount(String userEmail , String accountNum){
 
         Member member = memberRepository.findByEmail(userEmail);
