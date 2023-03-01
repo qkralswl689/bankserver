@@ -47,19 +47,21 @@ public class AccountService {
         String userEmail = accountdto.getEmail();
         String accountNum = accountdto.getAccountNum();
 
+        Member member = null;
+
         Account account = new Account();
+        if(chkUser(userEmail) == true){
 
-        if(chkUserAndAccount(userEmail,accountNum) == false){
+            if(chkUserAndAccount(userEmail,accountNum) == false){
 
-            Member member = memberRepository.findByEmail(userEmail.trim());
+                member = memberRepository.findByEmail(userEmail);
 
-            account.setMember(member);
-            account.setAccountNum(accountNum);
-            account.setTotal(accountdto.getTotal());
+                account.setMember(member);
+                account.setAccountNum(accountNum);
+                account.setTotal(accountdto.getTotal());
 
+            }
         }
-
-
         return accountRepository.save(account);
     }
 
@@ -67,7 +69,11 @@ public class AccountService {
     @Transactional
     public List<Account> searchAccount(String userEmail ){
 
-        List<Account> accountList = accountRepository.findByEmail(userEmail);
+        List<Account> accountList = null;
+
+        if(chkUser(userEmail) == true){
+            accountList = accountRepository.findByEmail(userEmail);
+        }
 
         return accountList;
     }
@@ -76,11 +82,16 @@ public class AccountService {
     @Transactional
     public List<AccountDetail> searchAccountByNum(String userEmail,String accountNum ){
 
-        if(chkUserAndAccount(userEmail,accountNum) == true){
+        if(chkUser(userEmail) == true){
 
-            List<AccountDetail> accountDetail = accountDetailRepository.findByEmailAndAccount(userEmail,accountNum);
-            return accountDetail;
+            if(chkUserAndAccount(userEmail,accountNum) == true){
+
+                List<AccountDetail> accountDetail = accountDetailRepository.findByEmailAndAccount(userEmail,accountNum);
+                return accountDetail;
+            }
         }
+
+
         return null;
     }
 
@@ -161,26 +172,33 @@ public class AccountService {
     // 사용자,계좌확인
     public boolean chkUserAndAccount(String userEmail , String accountNum){
 
+       if(chkUser(userEmail) == true){
+
+           Account account = accountRepository.findByEmailAndAccountNum(userEmail,accountNum);
+           if(account != null){
+
+               return true;
+           }
+
+           return false;
+
+       }
+        return false;
+    }
+
+    // 사용자
+    public boolean chkUser(String userEmail ){
+
         Member member = memberRepository.findByEmail(userEmail);
 
         if(member == null){
-            return false;
-        }else{
-            List<Account> account = accountRepository.findByEmail(userEmail);
-
-            if(account != null){
-
-                for( int i = 0; i < account.size(); i++){
-
-                    if(account.get(i).getAccountNum().equals(accountNum)){
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-
+            throw new IllegalStateException("회원이 존재하지 않습니다.");
         }
+
+        return true;
     }
+
+
+
 
 }

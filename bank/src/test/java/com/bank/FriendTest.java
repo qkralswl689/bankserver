@@ -45,7 +45,7 @@ public class FriendTest {
         assertEquals(saveFriend.getMember().getEmail(), saveFriend2.getFriend().getEmail());
         assertEquals(saveFriend2.getMember().getEmail(), saveFriend.getFriend().getEmail());
     }
- //시간 나면 다시
+
     @Test
     @DisplayName("친구삭제")
     public void deleteFriend() throws Exception{
@@ -65,9 +65,14 @@ public class FriendTest {
 
         List<Friend> myfriends = friendService.searchFriend(userEmail);
 
-        for (int i = 0; i < myfriends.size(); i++){
+        if(myfriends.size() > 0){
+            for (int i = 0; i < myfriends.size(); i++){
 
-            System.out.println(" Friend " + i + ": " + myfriends.get(i).getFriend().getEmail() );
+                System.out.println(" Friend " + i + ": " + myfriends.get(i).getFriend().getEmail() );
+            }
+
+        }else{
+            throw new IllegalStateException("등록된 친구가 없습니다.");
         }
 
     }

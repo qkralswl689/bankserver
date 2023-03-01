@@ -37,10 +37,9 @@ public class AccountTest {
 
         Accountdto accountdto = new Accountdto();
 
-
-        accountdto.setEmail("test0@gmail.com");
-        accountdto.setAccountNum("1234-5678-9990");
-        accountdto.setTotal(500000);
+        accountdto.setEmail("test8@gmail.com");
+        accountdto.setAccountNum("1234-5678-9998");
+        accountdto.setTotal(100000);
 
         Account saveAccount = accountService.createAccount(accountdto);
 
