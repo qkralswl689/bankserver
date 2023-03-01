@@ -27,32 +27,32 @@ public class MemberTest {
     public void joinMember() throws Exception{
 
         Memberdto memberdto = new Memberdto();
-//        String email = "test3@gmail.com";
-//        String password = "12343";
-//        String name = "홍길동3";
-//
-//        memberdto.setEmail(email);
-//        memberdto.setName(name);
-//        memberdto.setPassword(password);
-//
-//        Member saveMember =  memberService.joinMember(memberdto,passwordEncoder);
-//
-//        assertEquals(email , saveMember.getEmail());
-//        assertEquals(name , saveMember.getName());
+        String email = "test7@gmail.com";
+        String password = "12347";
+        String name = "홍길동7";
 
-        for(int i = 0; i < 10; i++){
-            String email = "test" + i + "@gmail.com";
-            String password = "1234" + i;
-            String name = "홍길동" + i;
-            memberdto.setEmail(email);
-            memberdto.setName(name);
-            memberdto.setPassword(password);
+        memberdto.setEmail(email);
+        memberdto.setName(name);
+        memberdto.setPassword(password);
 
-            Member saveMember =  memberService.joinMember(memberdto,passwordEncoder);
+        Member saveMember =  memberService.joinMember(memberdto,passwordEncoder);
 
-            assertEquals(email , saveMember.getEmail());
-            assertEquals(name , saveMember.getName());
-        }
+        assertEquals(email , saveMember.getEmail());
+        assertEquals(name , saveMember.getName());
+
+//        for(int i = 0; i < 10; i++){
+//            String email = "test" + i + "@gmail.com";
+//            String password = "1234" + i;
+//            String name = "홍길동" + i;
+//            memberdto.setEmail(email);
+//            memberdto.setName(name);
+//            memberdto.setPassword(password);
+//
+//            Member saveMember =  memberService.joinMember(memberdto,passwordEncoder);
+//
+//            assertEquals(email , saveMember.getEmail());
+//            assertEquals(name , saveMember.getName());
+//        }
 
     }
 }

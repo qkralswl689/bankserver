@@ -11,12 +11,18 @@ import java.util.List;
 @Repository
 public interface AccountDetailRepository extends JpaRepository<AccountDetail, Long> {
 
+//    //JPQL사용
+//    @Query("select a from AccountDetail a " +
+//            "where a.member.email = :email " +
+//            "order by a.inputTime ")
+//    List<AccountDetail> findByEmailAndAccount(@Param("email") String userEmail);
+
     //JPQL사용
     @Query("select a from AccountDetail a " +
-            "inner join a.account b " +
             "where a.member.email = :email " +
-            "and b.accountNum = :accountNum " +
-            "order by a.inputTime")
+            "and a.account.accountNum = :accountNum " +
+            "order by a.inputTime ")
     List<AccountDetail> findByEmailAndAccount(@Param("email") String userEmail, @Param("accountNum") String accountNum);
+
 
 }

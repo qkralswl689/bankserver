@@ -34,8 +34,8 @@ public class FriendTest {
     @DisplayName("친구추가")
     public void addFriend() throws Exception{
 
-        String email = "test0@gmail.com";
-        String friendEmail = "test5@gmail.com";
+        String email = "test2@gmail.com";
+        String friendEmail = "test7@gmail.com";
 
         friendService.addFriend(email,friendEmail);
 
@@ -45,17 +45,17 @@ public class FriendTest {
         assertEquals(saveFriend.getMember().getEmail(), saveFriend2.getFriend().getEmail());
         assertEquals(saveFriend2.getMember().getEmail(), saveFriend.getFriend().getEmail());
     }
-// 시간 나면 다시
-//    @Test
-//    @DisplayName("친구삭제")
-//    public void deleteFriend() throws Exception{
-//
-//        String email = "test1@gmail.com";
-//        String friendEmail = "test5@gmail.com";
-//
-//        friendService.deleteFriend(email,friendEmail);
-//
-//    }
+ //시간 나면 다시
+    @Test
+    @DisplayName("친구삭제")
+    public void deleteFriend() throws Exception{
+
+        String email = "test2@gmail.com";
+        String friendEmail = "test7@gmail.com";
+
+        friendService.deleteFriend(email,friendEmail);
+
+    }
 
     @Test
     @DisplayName("친구목록 조회")

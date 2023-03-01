@@ -1,6 +1,7 @@
 package com.bank.service;
 
 import com.bank.dto.AccountDetaildto;
+import com.bank.dto.Accountdto;
 import com.bank.entity.Account;
 import com.bank.entity.AccountDetail;
 import com.bank.entity.Friend;
@@ -41,17 +42,20 @@ public class AccountService {
 
     // 계좌생성
     @Transactional
-    public Account createAccount(Account account ){
+    public Account createAccount(Accountdto accountdto ){
 
-        String userEmail = account.getMember().getEmail();
-        String accountNum = account.getAccountNum();
+        String userEmail = accountdto.getEmail();
+        String accountNum = accountdto.getAccountNum();
 
-        if(chkUserAndAccount(userEmail,accountNum) == true){
+        Account account = new Account();
 
-            Member member = memberRepository.findByEmail(userEmail);
+        if(chkUserAndAccount(userEmail,accountNum) == false){
+
+            Member member = memberRepository.findByEmail(userEmail.trim());
 
             account.setMember(member);
             account.setAccountNum(accountNum);
+            account.setTotal(accountdto.getTotal());
 
         }
 
@@ -72,9 +76,12 @@ public class AccountService {
     @Transactional
     public List<AccountDetail> searchAccountByNum(String userEmail,String accountNum ){
 
-        List<AccountDetail> accountDetail = accountDetailRepository.findByEmailAndAccount(userEmail,accountNum);
+        if(chkUserAndAccount(userEmail,accountNum) == true){
 
-        return accountDetail;
+            List<AccountDetail> accountDetail = accountDetailRepository.findByEmailAndAccount(userEmail,accountNum);
+            return accountDetail;
+        }
+        return null;
     }
 
 
@@ -102,47 +109,48 @@ public class AccountService {
                 throw new IllegalStateException("계좌 잔액이 부족합니다.");
             }
 
+            AccountDetail toAcdetail = new AccountDetail();
             AccountDetail fromAcDetail = new AccountDetail();
-            AccountDetail toAcDetail = new AccountDetail();
 
-            fromAcDetail.setMember(member);
-            fromAcDetail.setSender(sender);
+            toAcdetail.setMember(member);
+            toAcdetail.setSender(sender);
+            toAcdetail.setAccount(toAccount);
+            toAcdetail.setBalance(accountdto.getBalance());
+            toAcdetail.setComments(accountdto.getComments());
+            toAcdetail.setTotal(toAccount.getTotal() + accountdto.getBalance());
+            toAcdetail.setRegTime(LocalDateTime.now());
+            toAcdetail.setUpdateTime(LocalDateTime.now());
+            toAcdetail.setInputTime(LocalDateTime.now());
+
+            AccountDetail saveToAcc = accountDetailRepository.save(toAcdetail);
+
+
+            fromAcDetail.setMember(sender);
+            fromAcDetail.setSender(member);
             fromAcDetail.setAccount(fromAccount);
             fromAcDetail.setBalance(accountdto.getBalance());
             fromAcDetail.setComments(accountdto.getComments());
             fromAcDetail.setTotal(fromAccount.getTotal() - accountdto.getBalance());
             fromAcDetail.setRegTime(LocalDateTime.now());
             fromAcDetail.setUpdateTime(LocalDateTime.now());
-            fromAcDetail.setInputTime(LocalDateTime.now());
+            fromAcDetail.setOutTime(LocalDateTime.now());
 
             fromAccount.setTotal(fromAccount.getTotal() - accountdto.getBalance());
             accountRepository.save(fromAccount);
 
-            AccountDetail saveFromAc = accountDetailRepository.save(fromAcDetail);
-
-            toAcDetail.setMember(sender);
-            toAcDetail.setSender(member);
-            toAcDetail.setAccount(toAccount);
-            toAcDetail.setBalance(accountdto.getBalance());
-            toAcDetail.setComments(accountdto.getComments());
-            toAcDetail.setTotal(toAccount.getTotal() + accountdto.getBalance());
-            toAcDetail.setRegTime(LocalDateTime.now());
-            toAcDetail.setUpdateTime(LocalDateTime.now());
-            toAcDetail.setInputTime(LocalDateTime.now());
-
             toAccount.setTotal(toAccount.getTotal() + accountdto.getBalance());
             accountRepository.save(toAccount);
 
-            AccountDetail saveToAc = accountDetailRepository.save(toAcDetail);
+            AccountDetail saveFromAcc = accountDetailRepository.save(fromAcDetail);
 
-            if(saveFromAc != null && saveToAc != null){
+            if(saveToAcc != null && saveFromAcc != null){
                 // 알람
                 mocking.alarm();
             }else {
                 throw new IllegalStateException("이체 실패.");
             }
 
-            return saveToAc;
+            return saveFromAcc;
 
         }
 
