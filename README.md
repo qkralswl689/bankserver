@@ -6,7 +6,7 @@
 #### 회원가입 api
 
 - RDB 설계 : id /회원 email / 이름 / password 로 구성
- ![스크린샷 2023-03-01 오후 8 51 04](https://user-images.githubusercontent.com/65608960/222131859-0a767727-1589-4958-a3de-92b9d4f8c797.png) 
+- ![스크린샷 2023-03-01 오후 8 51 04](https://user-images.githubusercontent.com/65608960/222131859-0a767727-1589-4958-a3de-92b9d4f8c797.png) 
 - 테스트 코드 : 가입할 회원이 email & password & 이름 입력 -> 가입된 회원인지 확인 -> password PasswordEncoder 를 이용해 암호화 되어 DB에 저장.
 - 새롭게 알게된 부분
 - 개선하고 싶었던 부분 : 
@@ -17,7 +17,7 @@
 - 스펙 : 
 - 아키텍처 스타일
 - RDB 설계 : id / 회원 email / 친구인 회원의 email 로 구성 => Member 와 1:1로 매핑된다
-![스크린샷 2023-03-01 오후 8 54 17](https://user-images.githubusercontent.com/65608960/222132690-6de0c3d6-b40a-468e-b5d8-c3c02f4003a2.png)
+- ![스크린샷 2023-03-01 오후 8 54 17](https://user-images.githubusercontent.com/65608960/222132690-6de0c3d6-b40a-468e-b5d8-c3c02f4003a2.png)
 - 테스트 코드 
   1) 친구 추가 : user의 이메일과 추가할 user의 이메일을 입력 -> 입력된 user가 가입된 회원인지 확인 -> 친구로 이미 등록되어있는지 확인 -> 친구 추가 -> 양쪽다 친구로 등록됨
   2) 친구 삭제 : user의 이메일과 추가할 user의 이메일을 입력 입력된 user가 가입된 회원인지 확인 -> 친구로  등록되어있는지 확인 -> 친구목록에서 삭제 -> 양쪽다 친구목록에서 삭제됨
@@ -29,9 +29,9 @@
 #### 계좌 api
 - RDB 설계 :
   1) Account : 회원id & 계좌 /  잔액만 표시 
-  ![스크린샷 2023-03-01 오후 8 54 38](https://user-images.githubusercontent.com/65608960/222132699-93d333ac-1719-4fe6-9b1b-01c241408442.png)
+-  ![스크린샷 2023-03-01 오후 8 54 38](https://user-images.githubusercontent.com/65608960/222132699-93d333ac-1719-4fe6-9b1b-01c241408442.png)
   2) AccountDetail : 회원id & 계좌 / 보낸사람 / 입,출금 금액 / 입,출금 시간 / 잔액 표시 
-![스크린샷 2023-03-01 오후 8 54 54](https://user-images.githubusercontent.com/65608960/222132703-bdbc8d87-a015-4b10-bc48-ebe8ab7cdc99.png)
+- ![스크린샷 2023-03-01 오후 8 54 54](https://user-images.githubusercontent.com/65608960/222132703-bdbc8d87-a015-4b10-bc48-ebe8ab7cdc99.png)
 - 테스트 코드 
   1) 계좌 생성 : user의 이메일 / 계좌번호 / 잔액 입력 -> 가입된 회원인지 확인 -> 입력된 계좌번호가 이미 존재하는지 확인 -> 계좌생성
   2) 계좌 이체 : 보낼 user의 이메일  & 계좌번호 / 받을 user의 이메일 & 계좌버호 입력 ->  가입된 회원인지 확인 -> 친구로 등록되어있는지 확인 -> 보낼 계좌의 잔액이 보낼금액보다 많은지 확인 -> 계좌이체 -> 알람 
