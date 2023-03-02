@@ -1,17 +1,16 @@
 # bankserver
 
 #### ERD : https://dbdiagram.io/d/63fcb332296d97641d84088f
-![스크린샷 2023-03-01 오후 8 55 33](https://user-images.githubusercontent.com/65608960/222132719-be6ae0df-aebd-4539-b26d-667b48832574.png)
+![스크린샷 2023-03-02 오후 9 51 04](https://user-images.githubusercontent.com/65608960/222433772-d9092f68-b5f9-435f-82fb-1042758b6dd9.png)
+=> 1. Member 테이블이 메인이 되어 Friend(친구목록) & Account(계좌) & AccountDetail(이체내역) 의 user와 연관관계를 맺는다.
+   2. AccountDetail 은 Account 의 Member / Sender & Account 가 연관관계를 맺는다.
 
 #### 회원가입 api
 
-- RDB 설계 : id /회원 email / 이름 / password 로 구성
+- RDB 설계 : id /회원 email / 이름 / password 로 구성 
 - ![스크린샷 2023-03-01 오후 8 51 04](https://user-images.githubusercontent.com/65608960/222131859-0a767727-1589-4958-a3de-92b9d4f8c797.png) 
 - 테스트 코드 : 가입할 회원이 email & password & 이름 입력 -> 가입된 회원인지 확인 -> password PasswordEncoder 를 이용해 암호화 되어 DB에 저장.
-- 새롭게 알게된 부분
 - 개선하고 싶었던 부분 : 
-- 피드백 받고싶은부분
-- 궁굼한 부분
 
 #### 친구추가/삭제 / 친구 목록 조회 api
 - 스펙 : 
